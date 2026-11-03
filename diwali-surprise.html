@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A little Diwali surprise</title>
+<style>
+:root{
+  --bg1:#1a0b2e;--bg2:#2d1050;--bg3:#4a1a6b;
+  --gold:#ffc83d;--amber:#ff9a1f;--ember:#ff5e3a;--cream:#fff3d6;
+  --glass:rgba(255,255,255,.07);--line:rgba(255,200,61,.35);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#1a0b2e}}
+:root[data-theme="dark"]{--bg1:#1a0b2e}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{
+  font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--cream);
+  background:radial-gradient(ellipse at 50% 110%,var(--bg3),var(--bg2) 45%,var(--bg1) 100%);
+  overflow:hidden;-webkit-tap-highlight-color:transparent;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg1)}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#fx{z-index:1}
+#stars{z-index:0}
+.lights{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:46px;z-index:5;pointer-events:none;display:flex;justify-content:space-around}
+.lights i{width:10px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;margin-top:14px;position:relative;animation:twinkle 2s infinite}
+.lights i::before{content:"";position:absolute;left:4px;top:-14px;width:2px;height:14px;background:#6b4a2a}
+.lights i:nth-child(4n+1){background:var(--gold);box-shadow:0 0 14px 4px rgba(255,200,61,.7)}
+.lights i:nth-child(4n+2){background:var(--amber);box-shadow:0 0 14px 4px rgba(255,154,31,.7);animation-delay:.5s}
+.lights i:nth-child(4n+3){background:var(--ember);box-shadow:0 0 14px 4px rgba(255,94,58,.7);animation-delay:1s}
+.lights i:nth-child(4n){background:#ff8fd0;box-shadow:0 0 14px 4px rgba(255,143,208,.6);animation-delay:1.5s}
+@keyframes twinkle{50%{opacity:.35;transform:scale(.8)}}
+main{position:relative;z-index:3;height:100%}
+.page{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:70px 22px 30px;text-align:center;gap:22px;
+  opacity:0;visibility:hidden;transform:scale(.94) translateY(24px);filter:blur(8px);
+  transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1),filter .7s ease,visibility 0s .7s;
+}
+.page.active{opacity:1;visibility:visible;transform:none;filter:none;transition-delay:0s}
+h1,h2{font-family:Georgia,"Palatino Linotype",serif;font-weight:700;line-height:1.15;text-shadow:0 0 24px rgba(255,200,61,.45)}
+h1{font-size:clamp(2rem,8vw,3.6rem);max-width:15ch}
+h2{font-size:clamp(1.6rem,6.5vw,2.8rem);max-width:18ch}
+p{font-size:clamp(1rem,3.6vw,1.2rem);line-height:1.55;max-width:34ch;color:#ffe6b0}
+.btn{
+  font:inherit;font-weight:700;font-size:1.05rem;color:#2a0e44;cursor:pointer;border:0;
+  padding:14px 30px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--amber));
+  box-shadow:0 0 22px rgba(255,170,40,.55),0 6px 0 #b86a0c;transition:transform .15s,box-shadow .15s;
+}
+.btn:hover{transform:translateY(-2px) scale(1.04)}
+.btn:active{transform:translateY(4px);box-shadow:0 0 22px rgba(255,170,40,.55),0 2px 0 #b86a0c}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.btn.ghost{background:var(--glass);color:var(--cream);box-shadow:0 0 0 2px var(--line)}
+.row{display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:64px}
+#noBtn{transition:left .35s cubic-bezier(.3,1.4,.5,1),top .35s cubic-bezier(.3,1.4,.5,1),transform .15s}
+#noBtn.run{position:fixed;z-index:20}
+/* diya */
+.diya{position:relative;width:150px;height:120px;margin-top:6px}
+.bowl{position:absolute;bottom:0;left:10px;width:130px;height:52px;border-radius:0 0 70px 70px/0 0 52px 52px;
+  background:linear-gradient(#e0792a,#8c3a10);box-shadow:0 0 40px 8px rgba(255,150,40,.45)}
+.bowl::before{content:"";position:absolute;top:-8px;left:0;right:0;height:18px;border-radius:50%;background:#ffb347;box-shadow:inset 0 -4px 6px #b8590f}
+.bowl::after{content:"";position:absolute;left:30px;right:30px;bottom:12px;height:8px;border-radius:8px;background:rgba(255,220,150,.5)}
+.flame{position:absolute;left:62px;bottom:48px;width:26px;height:56px;border-radius:50% 50% 50% 50%/65% 65% 35% 35%;
+  background:radial-gradient(ellipse at 50% 70%,#fff8d0 0 25%,var(--gold) 55%,var(--ember));
+  box-shadow:0 0 30px 12px rgba(255,170,40,.7),0 0 80px 30px rgba(255,120,30,.35);
+  transform-origin:50% 100%;animation:flick .18s infinite alternate}
+@keyframes flick{from{transform:scaleY(1) rotate(-3deg)}to{transform:scaleY(1.12) scaleX(.92) rotate(3deg)}}
+.diya.small{transform:scale(.55);margin:-30px}
+/* cute stuff */
+.emoji-row{font-size:2.2rem;display:flex;gap:14px;justify-content:center}
+.emoji-row span{animation:bob 1.6s ease-in-out infinite}
+.emoji-row span:nth-child(2){animation-delay:.2s}.emoji-row span:nth-child(3){animation-delay:.4s}
+.emoji-row span:nth-child(4){animation-delay:.6s}.emoji-row span:nth-child(5){animation-delay:.8s}
+@keyframes bob{50%{transform:translateY(-14px) rotate(8deg)}}
+.card{
+  min-height:110px;width:min(92vw,420px);display:flex;align-items:center;justify-content:center;padding:20px 22px;
+  background:var(--glass);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(6px);
+  font-size:1.15rem;line-height:1.45;box-shadow:0 0 30px rgba(255,170,40,.15);
+}
+.card.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.8) rotate(-2deg);opacity:.2}100%{transform:none;opacity:1}}
+.count{font-size:.9rem;color:#c9a8ee;min-height:1.2em}
+.hint{font-size:.85rem;color:#c9a8ee}
+.fall{position:fixed;top:-40px;z-index:2;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.flame,.emoji-row span,.lights i{animation-duration:2s}.page{transition-duration:.01s}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<canvas id="fx"></canvas>
+<div class="lights" id="lights"></div>
+
+<main>
+  <section class="page active" id="p1">
+    <div class="diya"><div class="flame"></div><div class="bowl"></div></div>
+    <h1>A little Diwali surprise for you!</h1>
+    <p>Someone lit a diya and left something here for you.</p>
+    <button class="btn" data-go="p2">Open Surprise 🎁</button>
+  </section>
+
+  <section class="page" id="p2">
+    <h2>Ready for a little surprise?</h2>
+    <div class="row" id="yesno">
+      <button class="btn" data-go="p3">YES!</button>
+      <button class="btn ghost" id="noBtn">NO</button>
+    </div>
+    <p class="hint" id="noHint">Go on, pick one.</p>
+  </section>
+
+  <section class="page" id="p3">
+    <div class="emoji-row"><span>🪔</span><span>🍬</span><span>✨</span><span>🍬</span><span>🪔</span></div>
+    <h2>Congratulations!</h2>
+    <p>You’ve unlocked unlimited sweets, good luck, happiness and absolutely no tension this Diwali!</p>
+    <button class="btn" data-go="p4">What else do I get?</button>
+  </section>
+
+  <section class="page" id="p4">
+    <h2>Your Diwali blessing</h2>
+    <div class="card" id="blessing">Tap the button. The universe has notes.</div>
+    <div class="count" id="count"></div>
+    <div class="row">
+      <button class="btn" id="bless">Get Your Diwali Blessing</button>
+    </div>
+    <button class="btn ghost" data-go="p5">Finish the surprise</button>
+  </section>
+
+  <section class="page" id="p5">
+    <h1>Happy Diwali! 🪔</h1>
+    <p>Wishing you happiness, good health, success and countless beautiful moments. Keep smiling and keep shining!</p>
+    <div class="row">
+      <button class="btn" id="more">More fireworks 🎆</button>
+      <button class="btn ghost" id="again">Play again</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var pages=document.querySelectorAll('.page'),current='p1';
+  function go(id){
+    if(id===current)return;
+    pages.forEach(function(p){p.classList.toggle('active',p.id===id)});
+    current=id;
+    if(id==='p3'){burst(3);sweets();}
+    if(id==='p5'){show=true;finale();}else{show=false;}
+    var noBtn=$('#noBtn');
+    if(id!=='p2'&&noBtn.classList.contains('run')){noBtn.classList.remove('run');noBtn.style.left=noBtn.style.top='';$('#yesno').appendChild(noBtn);}
+  }
+  document.querySelectorAll('[data-go]').forEach(function(b){
+    b.addEventListener('click',function(){go(b.getAttribute('data-go'));});
+  });
+
+  /* fairy lights */
+  var L=$('#lights'),n=Math.max(8,Math.floor(innerWidth/38));
+  for(var i=0;i<n;i++)L.appendChild(document.createElement('i'));
+
+  /* canvases */
+  var sc=$('#stars'),sx=sc.getContext('2d'),fc=$('#fx'),fx=fc.getContext('2d'),W,H,stars=[];
+  function size(){
+    var d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+    [sc,fc].forEach(function(c){c.width=W*d;c.height=H*d;});
+    sx.setTransform(d,0,0,d,0,0);fx.setTransform(d,0,0,d,0,0);
+    stars=[];for(var i=0;i<70;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,p:Math.random()*6});
+  }
+  addEventListener('resize',size);size();
+
+  /* fireworks */
+  var parts=[],rockets=[],show=false,cols=['#ffc83d','#ff9a1f','#ff5e3a','#ff8fd0','#b08cff','#fff3d6','#6fe3ff'];
+  function burst(k,x,y){
+    for(var j=0;j<k;j++){
+      rockets.push({x:x!==undefined?x:W*(.15+Math.random()*.7),y:H,tx:y!==undefined?y:H*(.15+Math.random()*.35),v:9+Math.random()*3,c:cols[Math.random()*cols.length|0],exp:x!==undefined});
+    }
+  }
+  function explode(x,y,c){
+    var cnt=60+(Math.random()*40|0),twoTone=Math.random()<.4,c2=cols[Math.random()*cols.length|0];
+    for(var i=0;i<cnt;i++){
+      var a=Math.PI*2*i/cnt,s=1.5+Math.random()*3.5;
+      parts.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,c:twoTone&&i%2?c2:c});
+    }
+  }
+  var last=0;
+  function loop(t){
+    sx.clearRect(0,0,W,H);
+    for(var i=0;i<stars.length;i++){var s=stars[i];sx.globalAlpha=.35+.35*Math.sin(t/700+s.p);sx.fillStyle='#ffe9b0';sx.beginPath();sx.arc(s.x,s.y,s.r,0,6.3);sx.fill();}
+    fx.globalCompositeOperation='destination-out';fx.fillStyle='rgba(0,0,0,.22)';fx.fillRect(0,0,W,H);
+    fx.globalCompositeOperation='lighter';fx.globalAlpha=1;
+    if(show&&t-last>650){last=t;burst(1+(Math.random()*2|0));}
+    rockets=rockets.filter(function(r){
+      if(r.exp){explode(r.x,r.tx,r.c);return false;}
+      r.y-=r.v;r.v*=.985;fx.fillStyle=r.c;fx.beginPath();fx.arc(r.x,r.y,2.5,0,6.3);fx.fill();
+      if(r.y<=r.tx||r.v<2){explode(r.x,r.y,r.c);return false;}return true;
+    });
+    parts=parts.filter(function(p){
+      p.x+=p.vx;p.y+=p.vy;p.vx*=.97;p.vy=p.vy*.97+.04;p.life-=.012;
+      if(p.life<=0)return false;
+      fx.globalAlpha=p.life;fx.fillStyle=p.c;fx.beginPath();fx.arc(p.x,p.y,2.2*p.life+.5,0,6.3);fx.fill();return true;
+    });
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  addEventListener('pointerdown',function(e){
+    if(e.target.closest('button'))return;
+    rockets.push({x:e.clientX,y:e.clientY,tx:e.clientY,v:0,c:cols[Math.random()*cols.length|0],exp:true});
+  });
+  function finale(){burst(4);setTimeout(function(){if(show)burst(3)},500);}
+  $('#more').addEventListener('click',function(){burst(6);});
+  $('#again').addEventListener('click',function(){
+    bag=[];clicks=0;$('#blessing').textContent='Tap the button. The universe has notes.';$('#count').textContent='';
+    go('p1');
+  });
+
+  /* NO button runs away */
+  var no=$('#noBtn'),hints=['Nice try.','Too slow!','The NO button is on vacation.','You’re getting warmer. Try YES.','It’s a diya, not a dare. Click YES.','Still chasing it? Respect.'],hi=0;
+  function dodge(e){
+    if(e&&e.preventDefault)e.preventDefault();
+    var r=no.getBoundingClientRect();
+    if(!no.classList.contains('run')){
+      no.classList.add('run');document.body.appendChild(no);
+    }
+    var w=r.width||90,h=r.height||50,m=14,safeT=70;
+    var x,y,tries=0;
+    do{
+      x=m+Math.random()*(innerWidth-w-2*m);
+      y=safeT+Math.random()*(innerHeight-h-safeT-m);tries++;
+    }while(tries<12&&Math.hypot(x-r.left,y-r.top)<110);
+    no.style.left=x+'px';no.style.top=y+'px';
+    $('#noHint').textContent=hints[hi++%hints.length];
+  }
+  ['pointerenter','pointerdown','touchstart','click'].forEach(function(ev){no.addEventListener(ev,dodge,{passive:false});});
+
+  /* sweets confetti */
+  function sweets(){
+    var set=['🪔','🍬','✨','🍪','🎇','🧡'];
+    for(var i=0;i<22;i++){
+      (function(i){setTimeout(function(){
+        var e=document.createElement('div');e.className='fall';e.textContent=set[Math.random()*set.length|0];
+        e.style.left=Math.random()*100+'vw';e.style.fontSize=(18+Math.random()*18)+'px';
+        e.style.animationDuration=(3+Math.random()*3)+'s';document.body.appendChild(e);
+        setTimeout(function(){e.remove()},6500);
+      },i*120);})(i);
+    }
+  }
+
+  /* blessings */
+  var blessings=[
+    'May your bank balance increase faster than Diwali expenses.',
+    'May nobody ask about your marks or future plans.',
+    'May you get unlimited holidays and unlimited food.',
+    'May your problems disappear like the Diwali snacks.',
+    'May your phone battery never die during important moments.',
+    'May your Wi-Fi stay strong while the family group chat explodes.',
+    'May every cracker go off on the first try, and far from your slippers.',
+    'May the leftover sweets outlast the guests who ask “just one more?”',
+    'May your cleaning-day efforts last at least until the festival ends.',
+    'May all your “seen” messages turn into actual replies.',
+    'May your outfit fit after the sweets. Or at least stretch gracefully.',
+    'May the lights on your balcony untangle themselves this year.'
+  ],bag=[],clicks=0,prev='';
+  $('#bless').addEventListener('click',function(){
+    if(!bag.length){
+      bag=blessings.slice().sort(function(){return Math.random()-.5});
+      if(bag[bag.length-1]===prev)bag.unshift(bag.pop());
+    }
+    prev=bag.pop();clicks++;
+    var c=$('#blessing');c.textContent=prev;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');
+    $('#count').textContent='Blessings collected: '+clicks;
+    var r=$('#bless').getBoundingClientRect();burst(1,r.left+r.width/2,r.top-80);
+  });
+})();
+</script>
+</body>
+</html>
